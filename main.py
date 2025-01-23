@@ -3,8 +3,12 @@ from model import WeatherModel
 from view import WeatherView
 from viewmodel import WeatherViewModel
 
+def get_api_key(filename):
+    with open(filename, "r") as file:
+        return file.read().strip()
+    
 if __name__ == "__main__":
-    API_KEY = "5a1c3777d1d06aafd1deae802db9a951"
+    API_KEY = get_api_key("key.txt")
 
     root = tk.Tk()
 

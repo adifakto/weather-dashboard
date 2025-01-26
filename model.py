@@ -17,7 +17,7 @@ class WeatherModel:
                 data = response.json()
                 return {
                     "temperature": data["main"]["temp"],
-                    "weather_condition": data["weather"][0]["description"]
+                    "weather_condition": data["weather"][0]["main"]
                 }
             else:
                 return None

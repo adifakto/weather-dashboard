@@ -1,10 +1,13 @@
+
 class WeatherViewModel:
     def __init__(self, model, view):
         self.model = model
         self.view = view
+
         self.refresh_request_id = 0 # Counter to track the most recent request
 
         """Assign the refresh button to use the weather update process"""        
+
         self.view.refresh_button.config(command=self.create_update_weather_command())
 
     def create_update_weather_command(self):
@@ -12,11 +15,12 @@ class WeatherViewModel:
         return lambda: self.update_weather()
 
     def update_weather(self):
-        """This is where the weather update process happens."""
-        city_name = self.view.city_entry.get()
-        data = self.model.fetch_weather(city_name)
+        """This is where the weather update process happens for each city."""
+        for city_index, city_entry in enumerate(self.view.city_entries):
+            city_name = city_entry.get()  # Get the city name from the entry
+            data = self.model.fetch_weather(city_name)  # Fetch weather data for the city
 
-        if data:
+            if data:
             self.view.update_temperature(f"Temperature: {data['temperature']}°C")
             self.view.update_condition(f"Condition: {data['weather_condition']}")
             self.view.update_min_max_tempreture(f"{data['min_tempreture']}°C/{data['max_tempreture']}°C")
@@ -43,3 +47,8 @@ class WeatherViewModel:
             self.view.update_sunrise(f"Sunrise: -- AM")
             self.view.update_sunset(f"Sunset: -- PM")
             self.view.error_label.pack_forget()
+
+        # After updating all cities, refresh the scroll region to reflect the layout change
+        self.view.city_frame.update_idletasks()
+        self.view.canvas.config(scrollregion=self.view.canvas.bbox("all"))
+

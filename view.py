@@ -4,11 +4,11 @@ class WeatherView:
     def __init__(self, root):
         self.root = root
         self.root.title("Weather Dashboard")
-        self.root.geometry("400x350")  # Adjust the window size
+        self.root.geometry("550x600")  # Adjust the window size
         self.root.config(bg="#F1F1F1")  # Light grey background for the window
 
         # Title
-        self.title_label = tk.Label(root, text="Weather App", font=("Helvetica", 20, "bold"), fg="#4A90E2")
+        self.title_label = tk.Label(root, text="Weather Dashboard App", font=("Helvetica", 20, "bold"), fg="#4A90E2")
         self.title_label.pack(pady=20)  # Add padding for top space
         self.apply_font(self.title_label)
         
@@ -28,14 +28,59 @@ class WeatherView:
         self.error_label.pack(pady=(5, 10))  # Add padding above the weather info
         self.error_label.pack_forget()  # Hide by default
 
-        # Weather Data Labels
-        self.temperature_label = tk.Label(root, text="Temperature: --°C", font=("Helvetica", 14), bg="#F1F1F1")
-        self.temperature_label.pack(pady=(10, 5))
+        # Weather Data Labels - Two Rows Layout to contain all the weather-related labels
+        self.weather_frame = tk.Frame(root, bg="#F1F1F1")
+        self.weather_frame.pack(pady=10)  # Add padding around the weather info
+
+         # Row 1
+        self.temperature_label = tk.Label(self.weather_frame, text="Temperature: --°C", font=("Helvetica", 12), bg="#F1F1F1")
+        self.temperature_label.grid(row=0, column=0, pady=10)  # Place in row 0, column 0
         self.apply_font(self.temperature_label)
         
-        self.condition_label = tk.Label(root, text="Condition: --", font=("Helvetica", 14), bg="#F1F1F1")
-        self.condition_label.pack(pady=(5, 20))
+        self.condition_label = tk.Label(self.weather_frame, text="Condition: --", font=("Helvetica", 12), bg="#F1F1F1")
+        self.condition_label.grid(row=0, column=1, columnspan=2, pady=10)  # Place in row 0, column 1
         self.apply_font(self.condition_label)
+        
+        # Row 2
+        self.min_max_tempreture_label = tk.Label(self.weather_frame, text="--°C/--°C", font=("Helvetica", 12), bg="#F1F1F1")
+        self.min_max_tempreture_label.grid(row=1, column=0, pady=10)
+        self.apply_font(self.min_max_tempreture_label)
+
+        self.feels_like_label = tk.Label(self.weather_frame, text="Feels Like: --°C", font=("Helvetica", 12), bg="#F1F1F1")
+        self.feels_like_label.grid(row=1, column=1, pady=10)
+        self.apply_font(self.feels_like_label)
+        
+        # Row 3
+        self.humidity_label = tk.Label(self.weather_frame, text="Humidity: --%")
+        self.humidity_label.grid(row=2, column=0, pady=10)
+        self.apply_font(self.humidity_label)
+        
+        self.wind_label = tk.Label(self.weather_frame, text="Wind: -- Km/h, --° Degrees")
+        self.wind_label.grid(row=2, column=1, pady=10)
+        self.apply_font(self.wind_label)
+        
+        # Row 4
+        self.visability_label = tk.Label(self.weather_frame, text="Visability: -- Km")
+        self.visability_label.grid(row=3,column=0, pady=10)
+        self.apply_font(self.visability_label)
+        
+        self.pressure_label = tk.Label(self.weather_frame, text="Pressure: -- hPa")
+        self.pressure_label.grid(row=3, column=1, pady=10)
+        self.apply_font(self.pressure_label)
+        
+        # Row 5
+        self.sea_level_label = tk.Label(self.weather_frame, text="Sea Level: --")
+        self.sea_level_label.grid(row=4, column=0, columnspan=2, pady=10)
+        self.apply_font(self.sea_level_label)
+        
+        # Row 6
+        self.sunrise_label = tk.Label(self.weather_frame, text="Sunrise: -- AM")
+        self.sunrise_label.grid(row=5, column=0, pady=10)
+        self.apply_font(self.sunrise_label)
+        
+        self.sunset_label = tk.Label(self.weather_frame, text="Sunset: -- PM")
+        self.sunset_label.grid(row=5, column=1, pady=10)
+        self.apply_font(self.sunset_label)
 
         # Refresh Button
         self.refresh_button = tk.Button(root, text="Refresh", font=("Helvetica", 12), bg="#4A90E2", fg="white")
@@ -48,6 +93,34 @@ class WeatherView:
 
     def update_condition(self, text):
         self.condition_label.config(text=text)
+        
+    def update_min_max_tempreture(self, text):
+        self.min_max_tempreture_label.config(text=text)
+        
+    def update_feels_like(self, text):
+        self.feels_like_label.config(text=text)
+        
+    def update_humidity(self, text):
+        self.humidity_label.config(text=text)
+        
+    def update_wind(self, text):
+        self.wind_label.config(text=text)
+        
+    def update_visability(self, text):
+        self.visability_label.config(text=text)
+        
+    def update_pressure(self, text):
+        self.pressure_label.config(text=text)
+        
+    def update_sea_level(self, text):
+        self.sea_level_label.config(text=text)
+        
+    def update_sunrise(self, text):
+        self.sunrise_label.config(text=text)
+        
+    def update_sunset(self, text):
+        self.sunset_label.config(text=text)
+        
 
     def show_error(self, error_message):
         """Displays error message above the weather info."""

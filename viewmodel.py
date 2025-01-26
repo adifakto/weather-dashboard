@@ -28,7 +28,7 @@ class WeatherViewModel:
             self.view.update_sea_level(f"Sea Level: {data['sea_level']}")
             self.view.update_sunrise(f"Sunrise: {data['sunrise']} AM")
             self.view.update_sunset(f"Sunset: {data['sunset']} PM")
-            self.view.error_label.pack_forget(f"")
+            self.view.error_label.pack_forget()
         else:
             self.view.show_error("city not found")
             self.view.update_temperature(f"Temperature: -- °C")
@@ -42,4 +42,4 @@ class WeatherViewModel:
             self.view.update_sea_level(f"Sea Level: --")
             self.view.update_sunrise(f"Sunrise: -- AM")
             self.view.update_sunset(f"Sunset: -- PM")
-            self.view.error_label.pack_forget(f"")
+            self.view.error_label.pack_forget()

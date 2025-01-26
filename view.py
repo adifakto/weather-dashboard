@@ -39,10 +39,18 @@ class WeatherView:
         self.temperature_label = tk.Label(self.weather_frame, text="Temperature: --°C", font=("Helvetica", 12), bg="#F1F1F1")
         self.temperature_label.grid(row=0, column=0, pady=10)  # Place in row 0, column 0
         self.apply_font(self.temperature_label)
+
+        # Condition Label inside the frame
+        self.condition_label = tk.Label(self.weather_frame, text="Condition: --", font=("Helvetica", 14), bg="#F1F1F1")
+        self.condition_label.grid(row=0, column=1, columnspan=2, pady=10)  # Align the label to the left side
+
+        # Weather Condition Image (to be placed to the right of the condition label)
+        self.condition_image_label = tk.Label(self.weather_frame, bg="#F1F1F1")  # Label to display the condition image
+        self.condition_image_label.grid(row=0, column=2, pady=10)  # Place the image to the right of the condition label
         
-        self.condition_label = tk.Label(self.weather_frame, text="Condition: --", font=("Helvetica", 12), bg="#F1F1F1")
-        self.condition_label.grid(row=0, column=1, columnspan=2, pady=10)  # Place in row 0, column 1
-        self.apply_font(self.condition_label)
+        # self.condition_label = tk.Label(self.weather_frame, text="Condition: --", font=("Helvetica", 12), bg="#F1F1F1")
+        # self.condition_label.grid(row=0, column=1, columnspan=2, pady=10)  # Place in row 0, column 1
+        # self.apply_font(self.condition_label)
         
         # Row 2
         self.min_max_tempreture_label = tk.Label(self.weather_frame, text="--°C/--°C", font=("Helvetica", 12), bg="#F1F1F1")
@@ -85,20 +93,6 @@ class WeatherView:
         self.sunset_label.grid(row=5, column=1, pady=10)
         self.apply_font(self.sunset_label)
 
-
-        # Frame for condition label and image
-        self.condition_frame = tk.Frame(root, bg="#F1F1F1")
-        self.condition_frame.pack(pady=(5, 10))  # Create the frame and add some vertical padding
-
-        # Condition Label inside the frame
-        self.condition_label = tk.Label(self.condition_frame, text="Condition: --", font=("Helvetica", 14), bg="#F1F1F1")
-        self.condition_label.pack(side="left", padx=(10, 0))  # Align the label to the left side
-
-        # Weather Condition Image (to be placed to the right of the condition label)
-        self.condition_image_label = tk.Label(self.condition_frame, bg="#F1F1F1")  # Label to display the condition image
-        self.condition_image_label.pack(side="left", padx=(10, 0))  # Place the image to the right of the label
-
-
         # Refresh Button
         self.refresh_button = tk.Button(root, text="Refresh", font=("Helvetica", 12), bg="#4A90E2", fg="white")
         self.refresh_button.pack(pady=10)
@@ -125,11 +119,18 @@ class WeatherView:
     def update_condition(self, text):
         # Extract the condition word by removing "Condition: " if it exists
         condition = text.replace("Condition: ", "").strip()
-        print(f"Received condition text: {text}")  # Debug log
-        print(f"Extracted condition: {condition}")  # Debug log
 
         # Update the condition label with the extracted condition
         self.condition_label.config(text=text)
+
+        
+        # Get the GIF path for the condition
+        gif_path = self.weather_gifs.get(condition, None)
+
+        if gif_path:
+            self.display_gif(gif_path)
+        else:
+            print("No matching GIF found.")
         
     def update_min_max_tempreture(self, text):
         self.min_max_tempreture_label.config(text=text)
@@ -157,18 +158,6 @@ class WeatherView:
         
     def update_sunset(self, text):
         self.sunset_label.config(text=text)
-        
-
-        # Get the GIF path for the condition
-        gif_path = self.weather_gifs.get(condition, None)
-
-        if gif_path:
-            print(f"GIF path found: {gif_path}")
-            self.display_gif(gif_path)
-        else:
-            print("No matching GIF found.")
-
-
 
     def display_gif(self, gif_path, target_width=70, target_height=70):
         try:

@@ -1,7 +1,7 @@
-#pip install pillow
-
 import tkinter as tk
+from tkinter import ttk
 from PIL import Image, ImageTk
+
 
 class WeatherView:
     def __init__(self, root):
@@ -34,6 +34,15 @@ class WeatherView:
         self.error_labels = []  # Will hold error labels
         self.remove_buttons = []  # Will hold remove buttons for each city
         self.city_frames = []  # Will hold city frames (including city input, weather labels, etc.)
+        self.min_max_temperature_labels = []  # Min-Max temperature labels
+        self.feels_like_labels = []  # Feels like temperature labels
+        self.humidity_labels = []  # Humidity labels
+        self.wind_labels = []  # Wind labels
+        self.visibility_labels = []  # Visibility labels
+        self.pressure_labels = []  # Pressure labels
+        self.sea_level_labels = []  # Sea level labels
+        self.sunrise_labels = []  # Sunrise labels
+        self.sunset_labels = []  # Sunset labels
 
         # Initially create one city entry (without a remove button)
         self.is_first_city = True
@@ -80,123 +89,117 @@ class WeatherView:
         """Adds a new city entry, temperature, condition, and refresh button."""
         # Create a city frame for each city and add it to the city_frame
         city_frame = tk.Frame(self.city_frame, bd=2, relief="solid", padx=10, pady=5)
-
+    
         # Determine the row and column for the grid
         row = 0  # All cities will be placed in the same row (row 0)
         column = len(self.city_entries)  # The column increments for each new city
-
+    
         # Use grid to ensure proper alignment of cities
         city_frame.grid(row=row, column=column, padx=10, pady=5, sticky="nsew")
-
+    
         # City Input Label
         city_label = tk.Label(city_frame, text="Enter City:", font=("Helvetica", 12), bg="#F1F1F1")
-        city_label.grid(row=0, column=0, pady=(10, 5))  # Pack with padding for better spacing
+        city_label.grid(row=0, column=0, pady=(10, 5))
         self.apply_font(city_label)
-
+    
         # City Input Field
         city_entry = tk.Entry(city_frame, font=("Helvetica", 14), relief="solid", bd=2, width=20)
         city_entry.insert(0, "London")  # Default text
-        city_entry.grid(row=1, column=0, pady=10)  # Pack with padding
+        city_entry.grid(row=1, column=0, pady=10)
         self.apply_border(city_entry)
-
-        # Weather Data Labels
-        temperature_label = tk.Label(city_frame, text="Temperature: --°C", font=("Helvetica", 14), bg="#F1F1F1")
-        temperature_label.grid(row=2, column=0, pady=(10, 5))  # Pack with padding
-        self.apply_font(temperature_label)
-
-        condition_label = tk.Label(city_frame, text="Condition: --", font=("Helvetica", 14), bg="#F1F1F1")
-        condition_label.grid(row=3, column=0, pady=(5, 20))  # Pack with padding
-        self.apply_font(condition_label)
-
+    
         # Error Label
         error_label = tk.Label(city_frame, text="", font=("Helvetica", 12), fg="red", bg="#F1F1F1")
-        error_label.grid(row=4, column=0, pady=(5, 10))  # Add padding
+        error_label.grid(row=4, column=0, pady=(5, 10))
         error_label.grid_forget()  # Hide by default
-
-        # Add the refresh button above the remove button
-        refresh_button = tk.Button(city_frame, text="Refresh", font=("Helvetica", 12), bg="#4A90E2", fg="white")
-        refresh_button.grid(row=5, column=0, pady=(10, 10))  # Place above the remove button
-
-        # Weather Data Labels - Two Rows Layout to contain all the weather-related labels
-        self.weather_frame = tk.Frame(root, bg="#F1F1F1")
-        self.weather_frame.pack(pady=10)  # Add padding around the weather info
-
-         # Row 1
-        self.temperature_label = tk.Label(self.weather_frame, text="Temperature: --°C", font=("Helvetica", 12), bg="#F1F1F1")
-        self.temperature_label.grid(row=0, column=0, pady=10)  # Place in row 0, column 0
-        self.apply_font(self.temperature_label)
-
-        # Condition Label inside the frame
-        self.condition_label = tk.Label(self.weather_frame, text="Condition: --", font=("Helvetica", 14), bg="#F1F1F1")
-        self.condition_label.grid(row=0, column=1, columnspan=2, pady=10)  # Align the label to the left side
-
-        # Weather Condition Image (to be placed to the right of the condition label)
-        self.condition_image_label = tk.Label(self.weather_frame, bg="#F1F1F1")  # Label to display the condition image
-        self.condition_image_label.grid(row=0, column=2, pady=10)  # Place the image to the right of the condition label
-        
-        # self.condition_label = tk.Label(self.weather_frame, text="Condition: --", font=("Helvetica", 12), bg="#F1F1F1")
-        # self.condition_label.grid(row=0, column=1, columnspan=2, pady=10)  # Place in row 0, column 1
-        # self.apply_font(self.condition_label)
-        
+    
+        # Weather Data Labels for the city
+        weather_frame = tk.Frame(city_frame, bg="#F1F1F1")
+        weather_frame.grid(row=2, column=0, columnspan=2, pady=10)  # Use grid for weather data layout
+    
+        # Row 1
+        temperature_label = tk.Label(weather_frame, text="Temperature: --°C", font=("Helvetica", 12), bg="#F1F1F1")
+        temperature_label.grid(row=0, column=0, pady=10)
+    
+        condition_label = tk.Label(weather_frame, text="Condition: --", font=("Helvetica", 12), bg="#F1F1F1")
+        condition_label.grid(row=0, column=1, pady=10)
+    
         # Row 2
-        self.min_max_tempreture_label = tk.Label(self.weather_frame, text="--°C/--°C", font=("Helvetica", 12), bg="#F1F1F1")
-        self.min_max_tempreture_label.grid(row=1, column=0, pady=10)
-        self.apply_font(self.min_max_tempreture_label)
-
-        self.feels_like_label = tk.Label(self.weather_frame, text="Feels Like: --°C", font=("Helvetica", 12), bg="#F1F1F1")
-        self.feels_like_label.grid(row=1, column=1, pady=10)
-        self.apply_font(self.feels_like_label)
-        
+        min_max_tempreture_label = tk.Label(weather_frame, text="--°C/--°C", font=("Helvetica", 12), bg="#F1F1F1")
+        min_max_tempreture_label.grid(row=1, column=0, pady=10)
+    
+        feels_like_label = tk.Label(weather_frame, text="Feels Like: --°C", font=("Helvetica", 12), bg="#F1F1F1")
+        feels_like_label.grid(row=1, column=1, pady=10)
+    
         # Row 3
-        self.humidity_label = tk.Label(self.weather_frame, text="Humidity: --%")
-        self.humidity_label.grid(row=2, column=0, pady=10)
-        self.apply_font(self.humidity_label)
+        humidity_label = tk.Label(weather_frame, text="Humidity: --%", font=("Helvetica", 12), bg="#F1F1F1")
+        humidity_label.grid(row=2, column=0, pady=10)
+    
+        wind_label = tk.Label(weather_frame, text="Wind: -- Km/h, --° Degrees", font=("Helvetica", 12), bg="#F1F1F1")
+        wind_label.grid(row=2, column=1, pady=10)
+
+         # Row 4
+        visability_label = tk.Label(weather_frame, text="Visability: -- Km", font=("Helvetica", 12), bg="#F1F1F1")
+        visability_label.grid(row=3, column=0, pady=10)
+        self.apply_font(visability_label)
         
-        self.wind_label = tk.Label(self.weather_frame, text="Wind: -- Km/h, --° Degrees")
-        self.wind_label.grid(row=2, column=1, pady=10)
-        self.apply_font(self.wind_label)
-        
-        # Row 4
-        self.visability_label = tk.Label(self.weather_frame, text="Visability: -- Km")
-        self.visability_label.grid(row=3,column=0, pady=10)
-        self.apply_font(self.visability_label)
-        
-        self.pressure_label = tk.Label(self.weather_frame, text="Pressure: -- hPa")
-        self.pressure_label.grid(row=3, column=1, pady=10)
-        self.apply_font(self.pressure_label)
+        pressure_label = tk.Label(weather_frame, text="Pressure: -- hPa", font=("Helvetica", 12), bg="#F1F1F1")
+        pressure_label.grid(row=3, column=1, pady=10)
+        self.apply_font(pressure_label)
         
         # Row 5
-        self.sea_level_label = tk.Label(self.weather_frame, text="Sea Level: --")
-        self.sea_level_label.grid(row=4, column=0, columnspan=2, pady=10)
-        self.apply_font(self.sea_level_label)
+        sea_level_label = tk.Label(weather_frame, text="Sea Level: --", font=("Helvetica", 12), bg="#F1F1F1")
+        sea_level_label.grid(row=4, column=0, columnspan=2, pady=10)
+        self.apply_font(sea_level_label)
         
         # Row 6
-        self.sunrise_label = tk.Label(self.weather_frame, text="Sunrise: -- AM")
-        self.sunrise_label.grid(row=5, column=0, pady=10)
-        self.apply_font(self.sunrise_label)
+        sunrise_label = tk.Label(weather_frame, text="Sunrise: -- AM", font=("Helvetica", 12), bg="#F1F1F1")
+        sunrise_label.grid(row=5, column=0, pady=10)
+        self.apply_font(sunrise_label)
         
-        self.sunset_label = tk.Label(self.weather_frame, text="Sunset: -- PM")
-        self.sunset_label.grid(row=5, column=1, pady=10)
-        self.apply_font(self.sunset_label)
-
-        # Add the remove button only if this isn't the first city
+        sunset_label = tk.Label(weather_frame, text="Sunset: -- PM", font=("Helvetica", 12), bg="#F1F1F1")
+        sunset_label.grid(row=5, column=1, columnspan=2, pady=10)
+        self.apply_font(sunset_label)
+    
+        # Frame for condition label and image
+        condition_frame = tk.Frame(city_frame, bg="#F1F1F1")
+        condition_frame.grid(row=3, column=0, columnspan=2, pady=5)
+    
+        condition_image_label = tk.Label(condition_frame, bg="#F1F1F1")  # Label to display the condition image
+        condition_image_label.grid(row=0, column=1)
+    
+        # Refresh Button
+        refresh_button = tk.Button(city_frame, text="Refresh", font=("Helvetica", 12), bg="#4A90E2", fg="white")
+        refresh_button.grid(row=5, column=0, pady=(10, 10))
+    
+        # Remove Button (only for non-first cities)
         if not self.is_first_city:
             remove_button = tk.Button(city_frame, text="Remove", font=("Helvetica", 12), bg="#FF4C4C", fg="white",
                                       command=lambda: self.remove_city(city_frame))
             remove_button.grid(row=6, column=0, pady=(10, 10))  # Pack the remove button
-
-        # Mark the first city as added
+    
         self.is_first_city = False
 
         # Append to the lists
         self.city_entries.append(city_entry)
+        self.error_labels.append(error_label)
+        self.city_frames.append(city_frame)
         self.temperature_labels.append(temperature_label)
         self.condition_labels.append(condition_label)
-        self.error_labels.append(error_label)
-        self.city_frames.append(city_frame)  # Add the city frame to the list
-
+        self.min_max_temperature_labels.append(min_max_tempreture_label)
+        self.feels_like_labels.append(feels_like_label)
+        self.humidity_labels.append(humidity_label)
+        self.wind_labels.append(wind_label)
+        self.visibility_labels.append(visability_label)  # Placeholder for now
+        self.pressure_labels.append(pressure_label)  # Placeholder for now
+        self.sea_level_labels.append(sea_level_label)  # Placeholder for now
+        self.sunrise_labels.append(sunrise_label)  # Placeholder for now
+        self.sunset_labels.append(sunset_label)  # Placeholder for now
+    
         # Update the scroll region and handle scrollbar visibility
         self.update_scroll_region()
+
+
 
     def remove_city(self, city_frame):
         """Removes the city and its associated components, including the remove button."""
@@ -214,8 +217,6 @@ class WeatherView:
             # After removal, update the lists
             self.city_frames.pop(index)
             self.city_entries.pop(index)
-            self.temperature_labels.pop(index)
-            self.condition_labels.pop(index)
             self.error_labels.pop(index)
 
             # Shift all subsequent cities left to fill the gap
@@ -245,14 +246,86 @@ class WeatherView:
             if not self.scrollbar.winfo_ismapped():  # Only show if not already visible
                 self.scrollbar.pack(side="bottom", fill="x", pady=(10, 20))
 
+    def update_weather_data(self, city_index, weather_data):
+        """Update weather data labels for a given city."""
+        self.update_temperature(city_index, weather_data["temperature"])
+        self.update_condition(city_index, weather_data["condition"])
+        self.update_min_max_tempreture(city_index, weather_data["min_max_temp"])
+        self.update_feels_like(city_index, weather_data["feels_like"])
+        self.update_humidity(city_index, weather_data["humidity"])
+        self.update_wind(city_index, weather_data["wind"])
+        self.update_visability(city_index, weather_data["visibility"])
+        self.update_pressure(city_index, weather_data["pressure"])
+        self.update_sea_level(city_index, weather_data["sea_level"])
+        self.update_sunrise(city_index, weather_data["sunrise"])
+        self.update_sunset(city_index, weather_data["sunset"])
+
     def update_temperature(self, city_index, text):
-        """Update the temperature label for the city at city_index."""
-        self.temperature_labels[city_index].config(text=text)
-        self.apply_decorations(self.temperature_labels[city_index])
+        """Update the temperature label."""
+        temperature_label = self.temperature_labels[city_index]
+        temperature_label.config(text=text)
 
     def update_condition(self, city_index, text):
-        """Update the condition label for the city at city_index."""
-        self.condition_labels[city_index].config(text=text)
+        """Update the condition label."""
+        condition_label = self.condition_labels[city_index]
+        condition_label.config(text=text)
+
+    def update_min_max_tempreture(self, city_index, text):
+        """Update the min/max temperature label."""
+        min_max_tempreture_label = self.min_max_temperature_labels[city_index]
+        min_max_tempreture_label.config(text=text) 
+
+    def update_feels_like(self, city_index, text):
+        """Update the feels like temperature label."""
+        feels_like_label = self.feels_like_labels[city_index]
+        feels_like_label.config(text=text)
+
+    def update_humidity(self, city_index, text):
+        """Update the humidity label."""
+        humidity_label = self.humidity_labels[city_index]
+        humidity_label.config(text=text)
+
+    def update_wind(self, city_index, text):
+        """Update the wind speed and direction label."""
+        wind_label = self.wind_labels[city_index]
+        wind_label.config(text=text) 
+
+    def update_visability(self, city_index, text):
+        """Update the visibility label."""
+        visibility_label = self.visibility_labels[city_index]
+        visibility_label.config(text=text)
+
+    def update_pressure(self, city_index, text):
+        """Update the pressure label."""
+        pressure_label = self.pressure_labels[city_index]
+        pressure_label.config(text=text)
+
+    def update_sea_level(self, city_index, text):
+        """Update the sea level label."""
+        sea_level_label = self.sea_level_labels[city_index]
+        sea_level_label.config(text=text)
+
+    def update_sunrise(self, city_index, text):
+        """Update the sunrise label."""
+        sunrise_label = self.sunrise_labels[city_index]
+        sunrise_label.config(text=text) 
+
+    def update_sunset(self, city_index, text):
+        """Update the sunset label."""
+        sunset_label = self.sunset_labels[city_index]
+        sunset_label.config(text=text) 
+
+    def apply_font(self, widget):
+        """Applies the general font style."""
+        widget.config(font=("Helvetica", 12))
+
+    def apply_border(self, entry_widget):
+        """Applies border style to the entry widget."""
+        entry_widget.config(bd=2, relief="solid")
+
+    def apply_button_style(self, button):
+        """Applies consistent style to all buttons."""
+        button.config(width=20)
 
     def show_error(self, city_index, error_message):
         """Displays error message for the city at city_index."""
@@ -266,99 +339,6 @@ class WeatherView:
     def get_city_name(self, city_index):
         """Returns the city name from the entry field."""
         return self.city_entries[city_index].get()
-
-        # Weather GIFs (stored as a dictionary for different conditions)
-        self.weather_gifs = {
-            "Clear": "pics/clear.gif",
-            "Clouds": "pics/clouds.gif",
-            "Rain": "pics/rain.gif",
-            "Drizzle": "pics/drizzle.gif",
-            "Thunderstorm": "pics/storm.gif",
-            "Snow": "pics/snow.gif",
-            "Mist": "pics/mist.gif",
-            "Fog": "pics/fog.gif",
-            "Haze": "pics/fog.gif"
-        }
-        self.current_gif = None  # To keep track of the displayed GIF
-
-    def update_temperature(self, text):
-        self.temperature_label.config(text=text)
-        self.apply_decorations(self.temperature_label)
-
-    def update_condition(self, text):
-        # Extract the condition word by removing "Condition: " if it exists
-        condition = text.replace("Condition: ", "").strip()
-
-        # Update the condition label with the extracted condition
-        self.condition_label.config(text=text)
-
-        
-        # Get the GIF path for the condition
-        gif_path = self.weather_gifs.get(condition, None)
-
-        if gif_path:
-            self.display_gif(gif_path)
-        else:
-            print("No matching GIF found.")
-        
-    def update_min_max_tempreture(self, text):
-        self.min_max_tempreture_label.config(text=text)
-        
-    def update_feels_like(self, text):
-        self.feels_like_label.config(text=text)
-        
-    def update_humidity(self, text):
-        self.humidity_label.config(text=text)
-        
-    def update_wind(self, text):
-        self.wind_label.config(text=text)
-        
-    def update_visability(self, text):
-        self.visability_label.config(text=text)
-        
-    def update_pressure(self, text):
-        self.pressure_label.config(text=text)
-        
-    def update_sea_level(self, text):
-        self.sea_level_label.config(text=text)
-        
-    def update_sunrise(self, text):
-        self.sunrise_label.config(text=text)
-        
-    def update_sunset(self, text):
-        self.sunset_label.config(text=text)
-
-    def display_gif(self, gif_path, target_width=70, target_height=70):
-        try:
-            self.current_gif = Image.open(gif_path)
-            self.gif_frames = []
-
-            for frame in range(self.current_gif.n_frames):
-                self.current_gif.seek(frame)
-                
-                # Resize the frame using PIL's resize method
-                resized_frame = self.current_gif.copy().resize((target_width, target_height))
-                frame_image = ImageTk.PhotoImage(resized_frame)
-
-                # Add the resized frame to the list of frames
-                self.gif_frames.append(frame_image)
-
-            self.animate_gif(0)
-        except Exception as e:
-            self.error_label.config(text=f"Error loading image: {e}")
-            self.error_label.pack()
-
-    def animate_gif(self, frame_index):
-        """Animate the GIF by cycling through frames."""
-        if self.gif_frames:
-            frame = self.gif_frames[frame_index]
-            self.condition_image_label.config(image=frame)
-            self.root.after(100, self.animate_gif, (frame_index + 1) % len(self.gif_frames))
-
-    def show_error(self, error_message):
-        """Displays error message above the weather info."""
-        self.error_label.config(text=error_message)
-        self.error_label.pack()  # Make the error label visible
 
     def apply_decorations(self, label):
         self.apply_color(label)

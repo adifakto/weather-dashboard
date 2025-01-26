@@ -190,11 +190,11 @@ class WeatherView:
         self.feels_like_labels.append(feels_like_label)
         self.humidity_labels.append(humidity_label)
         self.wind_labels.append(wind_label)
-        self.visibility_labels.append(visability_label)  # Placeholder for now
-        self.pressure_labels.append(pressure_label)  # Placeholder for now
-        self.sea_level_labels.append(sea_level_label)  # Placeholder for now
-        self.sunrise_labels.append(sunrise_label)  # Placeholder for now
-        self.sunset_labels.append(sunset_label)  # Placeholder for now
+        self.visibility_labels.append(visability_label)
+        self.pressure_labels.append(pressure_label)
+        self.sea_level_labels.append(sea_level_label)
+        self.sunrise_labels.append(sunrise_label)
+        self.sunset_labels.append(sunset_label)
     
         # Update the scroll region and handle scrollbar visibility
         self.update_scroll_region()
@@ -218,6 +218,18 @@ class WeatherView:
             self.city_frames.pop(index)
             self.city_entries.pop(index)
             self.error_labels.pop(index)
+            self.temperature_labels.pop(index)
+            self.condition_labels.pop(index)
+            self.min_max_temperature_labels.pop(index)
+            self.feels_like_labels.pop(index)
+            self.humidity_labels.pop(index)
+            self.wind_labels.pop(index)
+            self.visibility_labels.pop(index)
+            self.pressure_labels.pop(index)
+            self.sea_level_labels.pop(index)
+            self.sunrise_labels.pop(index)
+            self.sunset_labels.pop(index)
+    
 
             # Shift all subsequent cities left to fill the gap
             for i in range(index, len(self.city_entries)):

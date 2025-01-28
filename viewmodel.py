@@ -12,6 +12,7 @@ class WeatherViewModel:
         self.view.add_city_button.config(command=self.add_city_if_not_refreshing)
         self.view.refresh_button.config(command=self.update_weather)
 
+
     def add_city_if_not_refreshing(self):
         """Adds a city only if not currently refreshing."""
         if not self.is_refreshing:
@@ -57,3 +58,4 @@ class WeatherViewModel:
             self.view.show_error(city_index, error_message)
         else:
             self.view.hide_error(city_index)
+

@@ -89,6 +89,7 @@ class WeatherView:
         column = len(self.city_entries)  # The column increments for each new city
     
         # Use grid to ensure proper alignment of cities
+        city_frame = tk.Frame(self.city_frame, bd=2, relief="solid", padx=10, pady=5)
         city_frame.grid(row=row, column=column, padx=10, pady=5, sticky="nsew")
     
         # City Input Label
@@ -254,7 +255,6 @@ class WeatherView:
             if not self.scrollbar.winfo_ismapped():
                 self.scrollbar.pack(side="bottom", fill="x", pady=(10, 20))
 
-######################################################################################################## - Not is use. Delete?
     def update_weather_data(self, city_index, weather_data):
         """Update weather data labels for a given city."""
         self.update_temperature(city_index, weather_data["temperature"])
@@ -268,7 +268,6 @@ class WeatherView:
         self.update_sea_level(city_index, weather_data["sea_level"])
         self.update_sunrise(city_index, weather_data["sunrise"])
         self.update_sunset(city_index, weather_data["sunset"])
-########################################################################################################
 
     def update_temperature(self, city_index, text):
         """Update the temperature label."""
@@ -354,19 +353,19 @@ class WeatherView:
 
     def disable_all_buttons(self):
         """Disables all buttons in the UI."""
-        self.add_city_button.config(state="disabled")
-        self.refresh_button.config(state="disabled")
-        for remove_button in self.remove_buttons:
-            if remove_button.winfo_exists():  # Check if the button still exists
-                remove_button.config(state="disabled")
+        for button in self.refresh_buttons:
+            button.config(state="disabled")
+        self.refresh_all_button.config(state="disabled")  # Also disable the refresh all button
+        self.add_city_button.config(state="disabled")    # Disable the add city button
+
 
     def enable_all_buttons(self):
         """Enables all buttons in the UI."""
-        self.add_city_button.config(state="normal")
-        self.refresh_button.config(state="normal")
-        for remove_button in self.remove_buttons:
-            if remove_button.winfo_exists():  # Check if the button still exists
-                remove_button.config(state="normal")
+        for button in self.refresh_buttons:
+            button.config(state="normal")
+        self.refresh_all_button.config(state="normal")  # Re-enable the refresh all button
+        self.add_city_button.config(state="normal")    # Re-enable the add city button
+
 
     def apply_decorations(self, label):
         self.apply_color(label)

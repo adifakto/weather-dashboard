@@ -91,7 +91,7 @@ class WeatherViewModel:
             return  # Prevent multiple refreshes
 
         self.is_refreshing = True
-        self.view.disable_all_buttons()  # Disable buttons immediately
+        self.view.disable_all_buttons()  # Disable all buttons immediately
 
         # Start a background thread to fetch weather data
         Thread(target=self._fetch_weather_data, daemon=True).start()

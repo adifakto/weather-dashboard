@@ -1,4 +1,5 @@
 from threading import Thread, Lock
+import datetime
 
 class WeatherViewModel:
     def __init__(self, model, view):
@@ -11,24 +12,24 @@ class WeatherViewModel:
         self.view.on_city_added = self.on_new_city_added
 
         # Configure initial refresh buttons
-        for idx, button in enumerate(self.view.refresh_buttons):
-            self.configure_refresh_button(idx)
+        for index, button in enumerate(self.view.refresh_buttons):
+            self.configure_refresh_button(index)
 
         # Configure the refresh all button
         self.view.refresh_all_button.config(command=self.update_weather_all_command())
 
-    def on_new_city_added(self, city_index):
-        """Callback method when a new city is added."""
+    def on_new_city_added(self, city_frame):
+        city_index = self.view.city_frames.index(city_frame)
         self.configure_refresh_button(city_index)
+        
 
-    def configure_refresh_button(self, idx):
+    def configure_refresh_button(self, city_index):
         """Configures the refresh button for a specific city index."""
-        if idx < len(self.view.refresh_buttons):
-            self.view.refresh_buttons[idx].config(command=self.update_weather_command(idx))
+        self.view.refresh_buttons[city_index].config(command=self.update_weather_command(city_index))
 
-    def update_weather_command(self, idx):
+    def update_weather_command(self, city_index):
         """Creates the command directly as a callable (lambda function)."""
-        return lambda: self.update_weather(idx)
+        return lambda: self.update_weather(city_index)
 
     def update_weather_all_command(self):
         """Creates the command directly as a callable (lambda function)."""
@@ -46,12 +47,12 @@ class WeatherViewModel:
             self.view.update_min_max_tempreture(city_index, f"{data['min_tempreture']}°C/{data['max_tempreture']}°C")
             self.view.update_feels_like(city_index, f"Feels Like: {data['feels_like']}°C")
             self.view.update_humidity(city_index, f"Humidity: {data['humidity']}%")
-            self.view.update_wind(city_index, f"Wind: {data['wind_speed']} Km/h, {data['wind_degree']}° Degrees")
-            self.view.update_visability(city_index, f"Visability: {data['visability'] / 1000} Km")
+            self.view.update_wind(city_index, f"Wind: {data['wind_speed']} m/s, {data['wind_degree']}° Degrees")
+            self.view.update_visibility(city_index, f"visibility: {data['visibility'] / 1000} Km")
             self.view.update_pressure(city_index, f"Pressure: {data['pressure'] / 1000} hPa")
-            self.view.update_sea_level(city_index, f"Sea Level: {data['sea_level']}")
-            self.view.update_sunrise(city_index, f"Sunrise: {data['sunrise']} AM")
-            self.view.update_sunset(city_index, f"Sunset: {data['sunset']} PM")
+            self.view.update_clouds(city_index, f"Clouds: {data['clouds']}%")
+            self.view.update_sunrise(city_index, f"Sunrise: {datetime.datetime.fromtimestamp(data['sunrise'], tz=datetime.timezone.utc).strftime('%H:%M AM')}")
+            self.view.update_sunset(city_index, f"Sunset: {datetime.datetime.fromtimestamp(data['sunset'], tz=datetime.timezone.utc).strftime('%H:%M PM')}")
 
             # Loop through error_labels and call pack_forget on each
             for error_label in self.view.error_labels:
@@ -63,10 +64,10 @@ class WeatherViewModel:
             self.view.update_min_max_tempreture(city_index, "--°C/--°C")
             self.view.update_feels_like(city_index, "Feels Like: --°C")
             self.view.update_humidity(city_index, "Humidity: --%")
-            self.view.update_wind(city_index, "Wind: -- Km/h, --° Degrees")
-            self.view.update_visability(city_index, "Visability: -- Km")
+            self.view.update_wind(city_index, "Wind: -- m/s, --° Degrees")
+            self.view.update_visibility(city_index, "Visibility: -- Km")
             self.view.update_pressure(city_index, "Pressure: -- hPa")
-            self.view.update_sea_level(city_index, "Sea Level: --")
+            self.view.update_clouds(city_index, "Clouds: -- %")
             self.view.update_sunrise(city_index, "Sunrise: -- AM")
             self.view.update_sunset(city_index, "Sunset: -- PM")
 
@@ -77,8 +78,7 @@ class WeatherViewModel:
     
         # Bind buttons to methods
         self.view.add_city_button.config(command=self.add_city_if_not_refreshing)
-        self.view.refresh_button.config(command=self.update_weather)
-
+        # self.view.refresh_button.config(command=self.update_weather) --> 
 
     def add_city_if_not_refreshing(self):
         """Adds a city only if not currently refreshing."""
@@ -112,27 +112,27 @@ class WeatherViewModel:
                             f"Feels Like: {data['feels_like']}°C",
                             f"Humidity: {data['humidity']}%",
                             f"Wind: {data['wind_speed']} Km/h, {data['wind_degree']}° Degrees",
-                            f"Visibility: {data['visability'] / 1000} Km",
+                            f"Visibility: {data['visibility'] / 1000} Km",
                             f"Pressure: {data['pressure'] / 1000} hPa",
-                            f"Sea Level: {data['sea_level']}",
-                            f"Sunrise: {data['sunrise']} AM",
-                            f"Sunset: {data['sunset']} PM",
+                            f"Clouds: {data['clouds']}%",
+                            f"Sunrise: {datetime.datetime.fromtimestamp(data['sunrise'], tz=datetime.timezone.utc).strftime('%H:%M AM')}",
+                            f"Sunset: {datetime.datetime.fromtimestamp(data['sunset'], tz=datetime.timezone.utc).strftime('%H:%M PM')}",
                             ""
                         )
                     else:
                         self._update_ui(
                             city_index,
-                            "Temperature: --°C",
+                            "Temperature: -- °C",
                             "Condition: --",         
-                            "Min/Max Temp: --",
-                            "Feels Like: --",
-                            "Humidity: --",
-                            "Wind: --",
-                            "Visibility: --",
-                            "Pressure: --",
-                            "Sea Level: --",
-                            "Sunrise: --",
-                            "Sunset: --",
+                            "--°C/--°C",
+                            "Feels Like: --°C",
+                            "Humidity: --%",
+                            "Wind: -- m/s, --° Degrees",
+                            "Visibility: -- Km",
+                            "Pressure: -- hPa",
+                            "Clouds: --%",
+                            "Sunrise: -- AM",
+                            "Sunset: -- PM",
                             "City not found"
                         )
 
@@ -153,7 +153,7 @@ class WeatherViewModel:
         wind,
         visibility,
         pressure,
-        sea_level,
+        clouds,
         sunrise,
         sunset,
         error_message
@@ -171,12 +171,11 @@ class WeatherViewModel:
             wind,
             visibility,
             pressure,
-            sea_level,
+            clouds,
             sunrise,
             sunset,
             error_message
         )
-
 
     def _update_ui_safely(
         self,
@@ -189,7 +188,7 @@ class WeatherViewModel:
         wind,
         visibility,
         pressure,
-        sea_level,
+        clouds,
         sunrise,
         sunset,
         error_message
@@ -201,9 +200,9 @@ class WeatherViewModel:
         self.view.update_feels_like(city_index, feels_like)
         self.view.update_humidity(city_index, humidity)
         self.view.update_wind(city_index, wind)
-        self.view.update_visability(city_index, visibility)
+        self.view.update_visibility(city_index, visibility)
         self.view.update_pressure(city_index, pressure)
-        self.view.update_sea_level(city_index, sea_level)
+        self.view.update_clouds(city_index, clouds)
         self.view.update_sunrise(city_index, sunrise)
         self.view.update_sunset(city_index, sunset)
         if error_message:

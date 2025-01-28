@@ -2,28 +2,27 @@ import tkinter as tk
 from tkinter import ttk
 from PIL import Image, ImageTk
 
-
 class WeatherView:
     def __init__(self, root):
         self.root = root
         self.root.title("Weather Dashboard")
-        self.root.geometry("800x500")  # Adjusted size for horizontal scrolling
-        self.root.config(bg="#F1F1F1")  # Light grey background for the window
+        self.root.geometry("800x500")
+        self.root.config(bg="#F1F1F1")
 
         # Title
         self.title_label = tk.Label(root, text="Weather Dashboard App", font=("Helvetica", 20, "bold"), fg="#4A90E2")
         self.title_label.pack(pady=20)  # Add padding for top space
         self.apply_font(self.title_label)
 
-        # Create a frame for the scrollable area
+        # Scrollable area
         self.scrollable_frame = tk.Frame(root)
         self.scrollable_frame.pack(pady=(10, 0), padx=20, fill="both", expand=True)
 
-        # Create a Canvas widget for horizontal scrolling
+        # Canvas for horizontal scrolling
         self.canvas = tk.Canvas(self.scrollable_frame)
         self.canvas.pack(side="left", fill="both", expand=True)
 
-        # Create a frame to hold city entries and weather data (horizontal layout)
+        # Frame to hold city entries and weather data
         self.city_frame = tk.Frame(self.canvas)
         self.canvas.create_window((0, 0), window=self.city_frame, anchor="nw")
 
@@ -47,49 +46,36 @@ class WeatherView:
         # Initially create one city entry (without a remove button)
         self.is_first_city = True
 
-        # Create a horizontal scrollbar for the Canvas using ttk (now below buttons)
+        # Scrollbar
         self.scrollbar = ttk.Scrollbar(root, orient="horizontal", command=self.canvas.xview)
-        self.scrollbar.pack(side="bottom", fill="x", pady=(10, 20))  # Place scrollbar below buttons
-
-        # Configure the canvas scrollbar
+        self.scrollbar.pack(side="bottom", fill="x", pady=(10, 20))
         self.canvas.configure(xscrollcommand=self.scrollbar.set)
 
-        # Update scroll region
-        self.city_frame.update_idletasks()
-        self.canvas.config(scrollregion=self.canvas.bbox("all"))
-
-        # Customize the appearance of the scrollbar thumb
-        style = ttk.Style()
-        style.configure("TScrollbar", thickness=12)  # Adjust thickness here to make thumb smaller
-        style.configure("TScrollbar.slider", sliderlength=40)  # Make the thumb smaller
-
-        # Call add_city() after all initialization to ensure scrollbar is set
+        # Add initial city
         self.add_city()
 
-        # Frame to hold buttons (Add City and Refresh buttons)
+        # Button frame
         self.button_frame = tk.Frame(root, bg="#F1F1F1")
         self.button_frame.pack(pady=10, fill="x")
 
-        # Button to add more cities
-        self.add_city_button = tk.Button(self.button_frame, text="Add City", font=("Helvetica", 12), bg="#4A90E2", fg="white", command=self.add_city)
+        # Add City Button
+        self.add_city_button = tk.Button(self.button_frame, text="Add City", font=("Helvetica", 12), bg="#4A90E2",
+                                         fg="white", command=self.add_city)
         self.add_city_button.grid(row=0, column=0, padx=10, pady=10, sticky="ew", ipadx=8, ipady=4)
 
         # Refresh Button
-        self.refresh_button = tk.Button(self.button_frame, text="Refresh All", font=("Helvetica", 12), bg="#4A90E2", fg="white")
+        self.refresh_button = tk.Button(self.button_frame, text="Refresh All", font=("Helvetica", 12), bg="#4A90E2",
+                                        fg="white")
         self.refresh_button.grid(row=0, column=1, padx=10, pady=10, sticky="ew", ipadx=8, ipady=4)
 
-        # Ensure both buttons expand and are of equal width
+        # Configure button frame
         self.button_frame.grid_columnconfigure(0, weight=1)
         self.button_frame.grid_columnconfigure(1, weight=1)
 
-        self.apply_button_style(self.refresh_button)
-        self.apply_button_style(self.add_city_button)
-
     def add_city(self):
         """Adds a new city entry, temperature, condition, and refresh button."""
-        # Create a city frame for each city and add it to the city_frame
         city_frame = tk.Frame(self.city_frame, bd=2, relief="solid", padx=10, pady=5)
-    
+   
         # Determine the row and column for the grid
         row = 0  # All cities will be placed in the same row (row 0)
         column = len(self.city_entries)  # The column increments for each new city
@@ -100,6 +86,9 @@ class WeatherView:
         # City Input Label
         city_label = tk.Label(city_frame, text="Enter City:", font=("Helvetica", 12), bg="#F1F1F1")
         city_label.grid(row=0, column=0, pady=(10, 5))
+
+        # Append to lists
+
         self.apply_font(city_label)
     
         # City Input Field
@@ -181,11 +170,14 @@ class WeatherView:
         self.is_first_city = False
 
         # Append to the lists
+
         self.city_entries.append(city_entry)
         self.error_labels.append(error_label)
         self.city_frames.append(city_frame)
         self.temperature_labels.append(temperature_label)
         self.condition_labels.append(condition_label)
+        self.error_labels.append(error_label)
+        self.city_frames.append(city_frame)
         self.min_max_temperature_labels.append(min_max_tempreture_label)
         self.feels_like_labels.append(feels_like_label)
         self.humidity_labels.append(humidity_label)
@@ -202,19 +194,18 @@ class WeatherView:
 
 
     def remove_city(self, city_frame):
-        """Removes the city and its associated components, including the remove button."""
+        """Removes the city and its associated components."""
         try:
-            # Find the index of the city frame in the list
             index = self.city_frames.index(city_frame)
 
-            # Remove the "Remove" button from the list before destroying the city frame
-            if index < len(self.remove_buttons):
-                self.remove_buttons.pop(index)  # Remove the remove button from the list
+            # Destroy all widgets in the city frame
+            for widget in city_frame.winfo_children():
+                widget.destroy()
 
-            # Remove the city frame and its associated widgets
-            city_frame.destroy()
+            # Remove the city frame from the grid
+            city_frame.grid_forget()
 
-            # After removal, update the lists
+            # Remove the city frame and its associated components from the lists
             self.city_frames.pop(index)
             self.city_entries.pop(index)
             self.error_labels.pop(index)
@@ -231,31 +222,28 @@ class WeatherView:
             self.sunset_labels.pop(index)
     
 
-            # Shift all subsequent cities left to fill the gap
+            # Only remove the remove button if it exists
+            if index < len(self.remove_buttons):
+                self.remove_buttons.pop(index)
+
+            # Shift remaining cities
             for i in range(index, len(self.city_entries)):
-                # Move each city frame to the left (to the previous column)
-                self.city_frames[i].grid_forget()  # Remove the old position
-                self.city_frames[i].grid(row=0, column=i, padx=10, pady=5, sticky="nsew")  # Reposition
+                self.city_frames[i].grid_forget()
+                self.city_frames[i].grid(row=0, column=i, padx=10, pady=5, sticky="nsew")
 
-            # Update the scroll region and handle scrollbar visibility
+            # Update the scroll region
             self.update_scroll_region()
-
         except ValueError:
             print("City frame not found in the list.")
 
     def update_scroll_region(self):
         """Updates the scroll region and adjusts the scrollbar visibility."""
-        # Update the scroll region to the new city frame size
         self.city_frame.update_idletasks()
         self.canvas.config(scrollregion=self.canvas.bbox("all"))
-
-        # Check if the content fits within the visible area
         if self.canvas.bbox("all")[2] <= self.canvas.winfo_width():
-            # If the content width is less than or equal to the canvas width, hide the scrollbar
             self.scrollbar.pack_forget()
         else:
-            # If the content overflows, show the scrollbar
-            if not self.scrollbar.winfo_ismapped():  # Only show if not already visible
+            if not self.scrollbar.winfo_ismapped():
                 self.scrollbar.pack(side="bottom", fill="x", pady=(10, 20))
 
     def update_weather_data(self, city_index, weather_data):
@@ -276,6 +264,7 @@ class WeatherView:
         """Update the temperature label."""
         temperature_label = self.temperature_labels[city_index]
         temperature_label.config(text=text)
+
 
     def update_condition(self, city_index, text):
         """Update the condition label."""
@@ -342,7 +331,7 @@ class WeatherView:
     def show_error(self, city_index, error_message):
         """Displays error message for the city at city_index."""
         self.error_labels[city_index].config(text=error_message)
-        self.error_labels[city_index].grid(row=4, column=0)  # Make the error label visible
+        self.error_labels[city_index].grid(row=4, column=0)
 
     def hide_error(self, city_index):
         """Hides the error message for the city at city_index."""
@@ -351,6 +340,23 @@ class WeatherView:
     def get_city_name(self, city_index):
         """Returns the city name from the entry field."""
         return self.city_entries[city_index].get()
+
+
+    def disable_all_buttons(self):
+        """Disables all buttons in the UI."""
+        self.add_city_button.config(state="disabled")
+        self.refresh_button.config(state="disabled")
+        for remove_button in self.remove_buttons:
+            if remove_button.winfo_exists():  # Check if the button still exists
+                remove_button.config(state="disabled")
+
+    def enable_all_buttons(self):
+        """Enables all buttons in the UI."""
+        self.add_city_button.config(state="normal")
+        self.refresh_button.config(state="normal")
+        for remove_button in self.remove_buttons:
+            if remove_button.winfo_exists():  # Check if the button still exists
+                remove_button.config(state="normal")
 
     def apply_decorations(self, label):
         self.apply_color(label)

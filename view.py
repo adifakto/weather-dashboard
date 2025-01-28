@@ -31,6 +31,7 @@ class WeatherView:
         self.city_entries = []  # Will hold city input fields
         self.temperature_labels = []  # Will hold temperature labels
         self.condition_labels = []  # Will hold condition labels
+        self.gif_labels = []
         self.error_labels = []  # Will hold error labels
         self.remove_buttons = []  # Will hold remove buttons for each city
         self.city_frames = []  # Will hold city frames (including city input, weather labels, etc.)
@@ -123,6 +124,10 @@ class WeatherView:
     
         condition_label = tk.Label(weather_frame, text="Condition: --", font=("Helvetica", 12), bg="#F1F1F1")
         condition_label.grid(row=0, column=1, pady=10)
+
+        # Weather Condition Image (to be placed to the right of the condition label)
+        gif_label = tk.Label(weather_frame, bg="#F1F1F1")  # Label to display the condition image
+        gif_label.grid(row=0, column=2, pady=10)  # Place the image to the right of the label
     
         # Row 2
         min_max_tempreture_label = tk.Label(weather_frame, text="--°C/--°C", font=("Helvetica", 12), bg="#F1F1F1")
@@ -176,12 +181,27 @@ class WeatherView:
     
         self.is_first_city = False
 
+        # Weather GIFs (stored as a dictionary for different conditions)
+        self.weather_gifs = {
+            "Clear": "pics/clear.gif",
+            "Clouds": "pics/clouds.gif",
+            "Rain": "pics/rain.gif",
+            "Drizzle": "pics/drizzle.gif",
+            "Thunderstorm": "pics/storm.gif",
+            "Snow": "pics/snow.gif",
+            "Mist": "pics/mist.gif",
+            "Fog": "pics/fog.gif",
+            "Haze": "pics/fog.gif"
+        }
+        self.current_gif = None
+
         # Append to the lists
         self.city_entries.append(city_entry)
         self.error_labels.append(error_label)
         self.city_frames.append(city_frame)
         self.temperature_labels.append(temperature_label)
         self.condition_labels.append(condition_label)
+        self.gif_labels.append(gif_label)
         self.min_max_temperature_labels.append(min_max_tempreture_label)
         self.feels_like_labels.append(feels_like_label)
         self.humidity_labels.append(humidity_label)
@@ -216,6 +236,7 @@ class WeatherView:
             self.error_labels.pop(index)
             self.temperature_labels.pop(index)
             self.condition_labels.pop(index)
+            self.gif_labels.pop(index)
             self.min_max_temperature_labels.pop(index)
             self.feels_like_labels.pop(index)
             self.humidity_labels.pop(index)
@@ -274,9 +295,40 @@ class WeatherView:
         temperature_label.config(text=text)
 
     def update_condition(self, city_index, text):
-        """Update the condition label."""
+        """Update the condition label and display the weather image."""
         condition_label = self.condition_labels[city_index]
         condition_label.config(text=text)
+
+        # Get the condition text (after "Condition:")
+        condition = text.split(":")[1].strip()
+
+        # Get the image path for the weather condition
+        image_path = self.weather_gifs.get(condition, None)
+
+        if image_path:
+            try:
+                # Open the image using PIL
+                self.current_image = Image.open(image_path)
+
+                # Resize the image to fit the label (if needed)
+                resized_image = self.current_image.resize((70, 70))  # Adjust size as needed
+                image_display = ImageTk.PhotoImage(resized_image)
+
+                # Display the image by updating the image label
+                self.gif_labels[city_index].config(image=image_display)
+                self.gif_labels[city_index].image = image_display  # Keep a reference to the image
+            except Exception as e:
+                # If there is an error loading the image, show an error message
+                self.error_labels[city_index].config(text=f"Error loading image: {e}")
+
+                # Use grid instead of pack
+                self.error_labels[city_index].grid(row=city_index, column=2)  # Adjust row/column as needed
+        else:
+            print("No matching image found.")
+
+
+
+            
 
     def update_min_max_tempreture(self, city_index, text):
         """Update the min/max temperature label."""

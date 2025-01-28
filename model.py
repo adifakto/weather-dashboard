@@ -21,7 +21,7 @@ class WeatherModel:
                 }
             else:
                 return None
-            
+
         except requests.exceptions.RequestException as e:
             print(f"Error fetching weather data: {e}")
-            return None    
+            return None

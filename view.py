@@ -6,8 +6,8 @@ class WeatherView:
     def __init__(self, root):
         self.root = root
         self.root.title("Weather Dashboard")
-        self.root.geometry("800x500")
-        self.root.config(bg="#F1F1F1")
+        self.root.geometry("800x800")  # Adjusted size for horizontal scrolling
+        self.root.config(bg="#F1F1F1")  # Light grey background for the window
 
         # Title
         self.title_label = tk.Label(root, text="Weather Dashboard App", font=("Helvetica", 20, "bold"), fg="#4A90E2")
@@ -42,6 +42,10 @@ class WeatherView:
         self.sea_level_labels = []  # Sea level labels
         self.sunrise_labels = []  # Sunrise labels
         self.sunset_labels = []  # Sunset labels
+        self.refresh_buttons = []  # Refresh buttons
+        
+        # Callback mechanism for adding functionallity to the refresh button when a new city is added
+        self.on_city_added = None
 
         # Initially create one city entry (without a remove button)
         self.is_first_city = True
@@ -62,20 +66,24 @@ class WeatherView:
         self.add_city_button = tk.Button(self.button_frame, text="Add City", font=("Helvetica", 12), bg="#4A90E2",
                                          fg="white", command=self.add_city)
         self.add_city_button.grid(row=0, column=0, padx=10, pady=10, sticky="ew", ipadx=8, ipady=4)
-
-        # Refresh Button
-        self.refresh_button = tk.Button(self.button_frame, text="Refresh All", font=("Helvetica", 12), bg="#4A90E2",
-                                        fg="white")
-        self.refresh_button.grid(row=0, column=1, padx=10, pady=10, sticky="ew", ipadx=8, ipady=4)
+        
+        # Refresh All Button
+        self.refresh_all_button = tk.Button(self.button_frame, text="Refresh All", font=("Helvetica", 12), bg="#4A90E2", fg="white")
+        self.refresh_all_button.grid(row=0, column=1, padx=10, pady=10, sticky="ew", ipadx=8, ipady=4)
 
         # Configure button frame
         self.button_frame.grid_columnconfigure(0, weight=1)
         self.button_frame.grid_columnconfigure(1, weight=1)
 
+        self.apply_button_style(self.refresh_all_button)
+        self.apply_button_style(self.add_city_button)
+
     def add_city(self):
         """Adds a new city entry, temperature, condition, and refresh button."""
-        city_frame = tk.Frame(self.city_frame, bd=2, relief="solid", padx=10, pady=5)
-   
+    
+        # Get the index for the new city
+        new_city_index = len(self.city_entries)
+
         # Determine the row and column for the grid
         row = 0  # All cities will be placed in the same row (row 0)
         column = len(self.city_entries)  # The column increments for each new city
@@ -130,25 +138,20 @@ class WeatherView:
          # Row 4
         visability_label = tk.Label(weather_frame, text="Visability: -- Km", font=("Helvetica", 12), bg="#F1F1F1")
         visability_label.grid(row=3, column=0, pady=10)
-        self.apply_font(visability_label)
         
         pressure_label = tk.Label(weather_frame, text="Pressure: -- hPa", font=("Helvetica", 12), bg="#F1F1F1")
         pressure_label.grid(row=3, column=1, pady=10)
-        self.apply_font(pressure_label)
         
         # Row 5
         sea_level_label = tk.Label(weather_frame, text="Sea Level: --", font=("Helvetica", 12), bg="#F1F1F1")
         sea_level_label.grid(row=4, column=0, columnspan=2, pady=10)
-        self.apply_font(sea_level_label)
         
         # Row 6
         sunrise_label = tk.Label(weather_frame, text="Sunrise: -- AM", font=("Helvetica", 12), bg="#F1F1F1")
         sunrise_label.grid(row=5, column=0, pady=10)
-        self.apply_font(sunrise_label)
         
         sunset_label = tk.Label(weather_frame, text="Sunset: -- PM", font=("Helvetica", 12), bg="#F1F1F1")
         sunset_label.grid(row=5, column=1, columnspan=2, pady=10)
-        self.apply_font(sunset_label)
     
         # Frame for condition label and image
         condition_frame = tk.Frame(city_frame, bg="#F1F1F1")
@@ -187,9 +190,14 @@ class WeatherView:
         self.sea_level_labels.append(sea_level_label)
         self.sunrise_labels.append(sunrise_label)
         self.sunset_labels.append(sunset_label)
+        self.refresh_buttons.append(refresh_button)
     
         # Update the scroll region and handle scrollbar visibility
         self.update_scroll_region()
+        
+        # Notify callback about the new city
+        if self.on_city_added:
+            self.on_city_added(new_city_index)
 
 
 
@@ -220,7 +228,7 @@ class WeatherView:
             self.sea_level_labels.pop(index)
             self.sunrise_labels.pop(index)
             self.sunset_labels.pop(index)
-    
+            self.refresh_buttons.pop(index)
 
             # Only remove the remove button if it exists
             if index < len(self.remove_buttons):
@@ -246,6 +254,7 @@ class WeatherView:
             if not self.scrollbar.winfo_ismapped():
                 self.scrollbar.pack(side="bottom", fill="x", pady=(10, 20))
 
+######################################################################################################## - Not is use. Delete?
     def update_weather_data(self, city_index, weather_data):
         """Update weather data labels for a given city."""
         self.update_temperature(city_index, weather_data["temperature"])
@@ -259,6 +268,7 @@ class WeatherView:
         self.update_sea_level(city_index, weather_data["sea_level"])
         self.update_sunrise(city_index, weather_data["sunrise"])
         self.update_sunset(city_index, weather_data["sunset"])
+########################################################################################################
 
     def update_temperature(self, city_index, text):
         """Update the temperature label."""

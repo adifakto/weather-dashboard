@@ -1,4 +1,3 @@
-
 class WeatherViewModel:
     def __init__(self, model, view):
         self.model = model

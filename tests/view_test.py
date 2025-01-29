@@ -1,25 +1,24 @@
 import pytest
-from tkinter import Tk, StringVar
+from tkinter import Tk
+from unittest.mock import MagicMock
 from view import WeatherView
 
-def test_initial_state():
+@pytest.fixture(scope="function")
+def view():
+    """Fixture to create and clean up WeatherView instance."""
     root = Tk()
-    view = WeatherView(root)
-    yield view
+    view_instance = WeatherView(root)
+    yield view_instance
     root.destroy()
-    
+
+def test_initial_state(view):
     """Test the initial state of the WeatherView."""
-    assert len(view.city_entries) == 1, "Should start with one cities"
+    assert len(view.city_entries) == 1, "Should start with one city"
     assert len(view.city_frames) == 1, "Should start with one city frame"
     assert view.add_city_button.cget("state") == "normal", "Add city button should be enabled"
-    
-def test_add_multiple_cities():
+
+def test_add_multiple_cities(view):
     """Test adding multiple cities."""
-    root = Tk()
-    view = WeatherView(root)
-    yield view
-    root.destroy()
-    
     initial_count = len(view.city_entries)
     
     # Add three cities
@@ -30,33 +29,21 @@ def test_add_multiple_cities():
         assert len(view.temperature_labels) == initial_count + i
         assert isinstance(view.city_entries[-1].get(), str)
 
-def test_remove_specific_city():
+def test_remove_specific_city(view):
     """Test removing a specific city and verifying the correct one was removed."""
-    root = Tk()
-    view = WeatherView(root)
-    yield view
-    root.destroy()
-    
     # Add three cities
-    current_cities_counter = len(view.city_entries)
-    
-    for i in range(1, 4):
+    for _ in range(3):
         view.add_city()
-        current_cities_counter = current_cities_counter + 1
+    
+    initial_count = len(view.city_entries)
     
     # Remove the second city
     view.remove_city(view.city_frames[1])
-    current_cities_counter = current_cities_counter - 1
     
-    assert len(view.city_entries) == current_cities_counter # expected 3 cities left
+    assert len(view.city_entries) == initial_count - 1, "Expected one city to be removed"
 
-def test_error_handling():
+def test_error_handling(view):
     """Test comprehensive error handling functionality."""
-    root = Tk()
-    view = WeatherView(root)
-    yield view
-    root.destroy()
-    
     view.add_city()
     city_index = 0
     
@@ -65,5 +52,5 @@ def test_error_handling():
     view.show_error(city_index, error_message)
     assert view.error_labels[city_index].cget("text") == error_message
     
-    # Test that weather a label is cleared when showing error
+    # Test that temperature label is cleared when showing error
     assert view.temperature_labels[city_index].cget("text") == "Temperature: --°C"

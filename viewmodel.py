@@ -1,4 +1,5 @@
 from threading import Thread, Lock
+import datetime
 
 class WeatherViewModel:
     def __init__(self, model, view):
@@ -52,9 +53,8 @@ class WeatherViewModel:
                 self.view.update_visability(city_index, f"Visability: {data['visability']/1000} Km")
                 self.view.update_pressure(city_index, f"Pressure: {data['pressure']/1000} hPa")
                 self.view.update_sea_level(city_index, f"Sea Level: {data['sea_level']}")
-                self.view.update_sunrise(city_index, f"Sunrise: {data['sunrise']} AM")
-                self.view.update_sunset(city_index, f"Sunset: {data['sunset']} PM")
-
+                self.view.update_sunrise(city_index, f"Sunrise: {datetime.datetime.fromtimestamp(data['sunrise'], tz=datetime.timezone.utc).strftime('%H:%M AM')}")
+                self.view.update_sunset(city_index, f"Sunset: {datetime.datetime.fromtimestamp(data['sunset'], tz=datetime.timezone.utc).strftime('%H:%M PM')}")
                 # Loop through error_labels and call pack_forget on each
                 for error_label in self.view.error_labels:
                     error_label.pack_forget()

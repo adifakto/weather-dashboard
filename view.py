@@ -7,7 +7,7 @@ class WeatherView:
     def __init__(self, root):
         self.root = root
         self.root.title("Weather Dashboard")
-        self.root.geometry("800x500")  # Adjusted size for horizontal scrolling
+        self.root.geometry("1200x800")  # Adjusted size for horizontal scrolling
         self.root.config(bg="#F1F1F1")  # Light grey background for the window
 
         # Title

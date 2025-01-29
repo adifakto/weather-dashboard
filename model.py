@@ -23,13 +23,12 @@ class WeatherModel:
                     "max_tempreture": data["main"]["temp_max"],
                     "pressure": data["main"]["pressure"],
                     "humidity": data["main"]["humidity"],
-                    "clouds": data["clouds"]["all"],
-                    "visibility": data["visibility"],
+                    "sea_level": data["main"]["sea_level"],
+                    "visability": data["visibility"],
                     "wind_speed": data["wind"]["speed"],
                     "wind_degree": data["wind"]["deg"],
                     "sunrise": data["sys"]["sunrise"],
-                    "sunset": data["sys"]["sunset"],
-                    "timezone": data["timezone"]
+                    "sunset": data["sys"]["sunset"]
                 }
             else:
                 return None
@@ -37,4 +36,3 @@ class WeatherModel:
         except requests.exceptions.RequestException as e:
             print(f"Error fetching weather data: {e}")
             return None
-        

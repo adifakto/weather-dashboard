@@ -432,4 +432,3 @@ class WeatherView:
         for remove_button in self.remove_buttons:
             if remove_button.winfo_exists():  # Check if the button still exists
                 remove_button.config(state="normal")
-                

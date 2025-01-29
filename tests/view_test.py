@@ -2,14 +2,6 @@ import pytest
 from tkinter import Tk, StringVar
 from view import WeatherView
 
-# @pytest.fixture
-# def weather_view():
-#     """Fixture to set up the weather view for each test."""
-#     root = Tk()
-#     view = WeatherView(root)
-#     yield view
-#     root.destroy()
-
 def test_initial_state():
     root = Tk()
     view = WeatherView(root)

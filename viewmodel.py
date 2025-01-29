@@ -1,24 +1,45 @@
+from threading import Thread, Lock
+
 class WeatherViewModel:
     def __init__(self, model, view):
         self.model = model
         self.view = view
+        self.is_refreshing = False
+        self.lock = Lock()  # Add a lock for thread safety
+        
+        # Bind buttons to methods
+        self.view.add_city_button.config(command=self.add_city_if_not_refreshing)
+        self.view.refresh_button.config(command=self.create_update_weather_command)
 
-        self.refresh_request_id = 0 # Counter to track the most recent request
-
-        """Assign the refresh button to use the weather update process"""        
-
-        self.view.refresh_button.config(command=self.create_update_weather_command())
-
+        """Assign the refresh button to use the weather update process"""     
+           
+    def add_city_if_not_refreshing(self):
+        """Adds a city only if not currently refreshing."""
+        if not self.is_refreshing:
+            self.view.add_city()
+            
     def create_update_weather_command(self):
-        """Creates the command directly as a callable (lambda function)."""
-        return lambda: self.update_weather()
+        """Updates weather data for all cities in a background thread."""
+        if self.is_refreshing:
+            return  # Prevent multiple refreshes
+
+        self.is_refreshing = True
+        self.view.disable_all_buttons()  # Disable buttons immediately
+
+        # Start a background thread to fetch weather data
+        Thread(target=self.update_weather, daemon=True).start()
+
 
     def update_weather(self):
+        # if self.is_refreshing:
+        #     return
+        
+        self.is_refreshing = True
+        self.view.disable_all_buttons()  # Disable buttons immediately
         """This is where the weather update process happens for each city."""
         for city_index, city_entry in enumerate(self.view.city_entries):
             city_name = city_entry.get()  # Get the city name from the entry
             data = self.model.fetch_weather(city_name)  # Fetch weather data for the city
-
             if data:
                 # Pass the city_index along with the data to the update methods
                 self.view.hide_error(city_index)
@@ -54,8 +75,10 @@ class WeatherViewModel:
                 # Loop through error_labels and call pack_forget on each
                 for error_label in self.view.error_labels:
                     error_label.pack_forget()
+            
+        self.is_refreshing = False
+        self.view.enable_all_buttons()  # Re-enable buttons when done
 
-
-            # After updating all cities, refresh the scroll region to reflect the layout change
+        # After updating all cities, refresh the scroll region to reflect the layout change
         self.view.city_frame.update_idletasks()
         self.view.canvas.config(scrollregion=self.view.canvas.bbox("all"))

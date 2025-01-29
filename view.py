@@ -178,6 +178,7 @@ class WeatherView:
             remove_button = tk.Button(city_frame, text="Remove", font=("Helvetica", 12), bg="#FF4C4C", fg="white",
                                       command=lambda: self.remove_city(city_frame))
             remove_button.grid(row=6, column=0, pady=(10, 10))  # Pack the remove button
+            self.remove_buttons.append(remove_button)
     
         self.is_first_city = False
 
@@ -246,7 +247,9 @@ class WeatherView:
             self.sea_level_labels.pop(index)
             self.sunrise_labels.pop(index)
             self.sunset_labels.pop(index)
-    
+            # Only remove the remove button if it exists
+            if index < len(self.remove_buttons):
+                self.remove_buttons.pop(index)
 
             # Shift all subsequent cities left to fill the gap
             for i in range(index, len(self.city_entries)):
@@ -326,9 +329,6 @@ class WeatherView:
         else:
             print("No matching image found.")
 
-
-
-            
 
     def update_min_max_tempreture(self, city_index, text):
         """Update the min/max temperature label."""
@@ -416,3 +416,20 @@ class WeatherView:
     def apply_button_style(self, button):
         button.config(font=("Helvetica", 12, "bold"), relief="raised", height=1, width=12)
         button.config(activebackground="#357ABD", activeforeground="white")
+    
+    def disable_all_buttons(self):
+        """Disables all buttons in the UI."""
+        self.add_city_button.config(state="disabled")
+        self.refresh_button.config(state="disabled")
+        for remove_button in self.remove_buttons:
+            if remove_button.winfo_exists():  # Check if the button still exists
+                remove_button.config(state="disabled")
+
+    def enable_all_buttons(self):
+        """Enables all buttons in the UI."""
+        self.add_city_button.config(state="normal")
+        self.refresh_button.config(state="normal")
+        for remove_button in self.remove_buttons:
+            if remove_button.winfo_exists():  # Check if the button still exists
+                remove_button.config(state="normal")
+                

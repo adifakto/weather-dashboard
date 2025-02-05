@@ -1,12 +1,12 @@
 # Weather Dashboard App ☀️🌧️🌡️
 
-A weather dashboard built with Python and Tkinter, featuring real-time weather updates, dynamic UI elements, and animated weather condition icons.
+A weather dashboard built with Python and Tkinter, featuring real-time weather updates, dynamic UI elements, and weather condition icons.
 
 ## 🌟 Features
 
 - **Live Weather Updates**: Fetch real-time weather data for cities.
 
-- **Animated Weather Icons**: Displays condition-based GIFs.
+- **Weather Icons**: Displays condition-based images.
 
 - **Scrollable Layout**: Horizontal scrolling for managing multiple cities.
 
@@ -21,6 +21,7 @@ A weather dashboard built with Python and Tkinter, featuring real-time weather u
 **2. Install dependencies using pip**
 
 ```bash
+pip install tkinter
 pip install requests
 pip install pillow
 ```
@@ -46,10 +47,6 @@ Animated weather icons change based on conditions.
 Python (for logic and API calls)
 
 Pillow (PIL) (for handling images and GIFs)
-
-## 📝 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
 
 ## 🙌 Acknowledgments
 

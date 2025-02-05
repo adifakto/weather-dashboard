@@ -32,7 +32,7 @@ pip install pillow
 python main.py
 ```
 🔹 The `main` branch contains the version presented in class.  
-🔹 The `un` branch includes an improved version with:  
+🔹 The `tests-and-minor-bug-fixes` branch includes an improved version with:  
 - A **modernized UI** using `customtkinter`  
 - **Dark mode** support   
 - **Refresh**  for each city
@@ -54,7 +54,7 @@ Python (for logic and API calls)
 
 Pillow (PIL) (for handling images and GIFs)
 
-CustomTkinter (for enhanced UI in the un branch)
+CustomTkinter (for enhanced UI in the tests-and-minor-bug-fixes branch)
 
 ## 🙌 Acknowledgments
 
